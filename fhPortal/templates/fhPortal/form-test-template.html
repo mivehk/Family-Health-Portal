@@ -1,0 +1,29 @@
+<div class ="container text-center form-container" >
+<div class= "row" >  
+    {% for field in form %}
+    <div class="col-sm-6">
+        <div class="form-group">
+            {% if field.errors %}
+                <div>
+                    <span class="text-danger">{{ field.errors }}</span>
+                </div>
+            {% endif %} 
+
+            <label for="{{ field.id_for_label }}"> {{ field.label }}</label>
+            <!-- Render the form field -->
+            {{ field }}
+
+            <!-- Display the current value for ClusterUpdate -->
+            {% if view_type == "TestUpdate" %}
+                <small class="text-muted">Current value: <strong> {{ field.initial }} </strong> </small>
+            {% endif %}
+        </div>
+    </div>
+            {% if forloop.counter|divisibleby:2 %}
+                </div><div class="row">
+            {% endif %}
+        {% endfor %}
+</div>
+</div>
+
+<!---this is the test entry form --->

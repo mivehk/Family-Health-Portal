@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="vertical-shelf">
+<div>	
+<form method="post" action="{% url 'fhAuth:logout' %}">
+	{% csrf_token %}
+	<button type="submit">Logout</button>
+</form>
+</div>
+<div>
+<p>Are you sure you want to delete {{ patient.p_last_name }}?<p><br>
+<form method="post" action="{% url 'fhPortal:patient-delete' patient.pk %}">
+	{% csrf_token %}
+	<button type="submit" class="button"> Yes, Delete</button>
+</form>
+</div><br><br>
+<a href="{% url 'fhAuth:index' %}" class="button"> No, Back to Patients</a>	
+
+</div>
+{% endblock %}

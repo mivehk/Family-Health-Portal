@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+    {% block title %}Family Health Portal{% endblock %}
+    </title>
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .sidebar {
+            height: 100vh;
+            width: 20vw;
+            position: fixed;
+            background-color: #9dd0eb;
+            color: white;
+            padding-top: 20px;
+        }
+        .sidebar h2 {
+        text-align: center;
+        font-size: calc(2vw + 1rem); /* Adjusts size based on sidebar 20vw */
+        margin: 0;
+        padding: 10px;
+        }
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 15px;
+            text-decoration: none;
+            text-align: center;
+            margin: 5px 0;
+        }
+        .sidebar a:hover {
+            background-color: #c61d60;
+        }
+        .vertical-shelf{
+            margin-left: 20vw;
+            /*width: 80vw;*/
+            display: flex;
+            flex-direction: column; /* Stack elements vertically */
+            width: 100vw; /* Full viewport width */
+            height: 100vh; /* Full viewport height */
+            align-items: center; /* Ensure items stretch perpendicular to main axis. here we chose column so align horizontally */
+            justify-content: flex-start; /* alignment along the main axis so here it flex from start vertically */
+                /*https://www.w3schools.com/css/css3_flexbox_container.asp*/
+            }
+        p#brief{
+            margin-right: 50px;
+            margin-left: 50px;
+            text-align: center;
+            color: #69f;
+            font-size: larger;
+            border-style: solid;
+            border-color: chartreuse;
+            width: 100%;
+        }
+        p#privacy{ 
+            /*margin-left: 250px;*/
+            color: #69f;
+            font-size: large;
+            border-style: solid;
+            border-color: chartreuse;
+            width: 100%;
+        }
+        .main-content {
+            /*margin-left: 250px;*/
+            width: 100vw;
+            padding: 20px;
+            display: flex;
+            flex: 1;
+            justify-content: center;
+            align-items: center;
+            background-color: #f1f1f1
+        }
+        .active {
+            background-color: #d6b962;
+        }
+        footer {
+            /*margin-left: 250px;*/
+            background-color: #000080;
+            color: white;
+            text-align: center;
+            width: 100%;
+            bottom: 0;
+            position: fixed;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Family Health Portal </h2>
+        <a href="{% url 'fhAuth:register' %}" class="{% if request.path == '/fhAuth/register/' %}active{% endif %}">Register</a>
+        <a href="{% url 'fhAuth:login' %}" class="{% if request.path == '/fhAuth/login/' %}active{% endif %}">Login</a>
+    </div>
+     <div >
+        <p id="brief"><b>This program allows you to monitor family members' medical test results </b></p>
+
+        <div class="main-content">
+            {% block content %}
+            <!-- Content from child templates appears here -->
+            {% endblock %}
+        </div>
+    </div>
+<footer>
+    <div>
+        <p>&copy; 2024 Django App. Open Source Bootstrap Licensed MIT, Docs by CreativeCommons</p> 
+    </div>
+</footer>
+</body>
+</html>
+

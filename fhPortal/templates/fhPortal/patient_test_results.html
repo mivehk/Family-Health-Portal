@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="vertical-shelf">
+    <div>
+        <form method="post" action="{% url 'fhAuth:logout' %}">
+        {% csrf_token %}
+        <button type="submit"> Logout </button>
+        </form>
+    </div>
+<div class="form-group">
+    {% if testresult_list %}
+    <h1>Test Results for {{ patient.p_first_name }} {{ patient.p_last_name }}</h1><br>
+    <ul>
+        {% for test in testresult_list %}
+            <li>
+                Test Date: {{ test.test_date }}<br>
+                Glucose: {{ test.glucose }}<br>
+                BUN: {{ test.bun }}<br>
+                Creatinine: {{ test.creatinine }} ({{ test.cr_micromole }} µmol/L)<br>
+                eGFR: {{ test.egfr }}<br>
+                Test Creation Date: {{ test.test_creation_date }} <br>
+            </li><br>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <h1 class='result'> No test results entered yet</h1>
+    {% endif %}
+</div><br>
+    <a href="{% url 'fhPortal:index' %}">Back to Patients</a>
+</div>    
+{% endblock %}
+
