@@ -14,8 +14,10 @@
 	{% csrf_token %}
 	<button type="submit" class="button"> Yes, Delete</button>
 </form>
-</div><br><br>
+</div>
+<div> <p> </p> <br></div>
+<div>
 <a href="{% url 'fhAuth:index' %}" class="button"> No, Back to Patients</a>	
-
+</div>
 </div>
 {% endblock %}

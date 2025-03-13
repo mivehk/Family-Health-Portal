@@ -14,12 +14,12 @@
     <ul>
         {% for test in testresult_list %}
             <li>
-                Test Date: {{ test.test_date }}<br>
-                Glucose: {{ test.glucose }}<br>
-                BUN: {{ test.bun }}<br>
-                Creatinine: {{ test.creatinine }} ({{ test.cr_micromole }} µmol/L)<br>
-                eGFR: {{ test.egfr }}<br>
-                Test Creation Date: {{ test.test_creation_date }} <br>
+                <b>Test Date: {{ test.test_date }}</b><br>
+                <b>Glucose: {{ test.glucose }} </b> _ Normal Range of Fasting Glucose is 70-100 mg/dL<br>
+                <b>BUN: {{ test.bun }} </b> _ Normal Range of BUN is 7-20 mg/dL <br>
+                <b>Creatinine: {{ test.creatinine }} ({{ test.cr_micromole }} µmol/L) </b> _ Normal Range of Creatinine (Men)0.7-1.3 mg/dL, (Women) 0.6-1.1 mg/dL<br>
+                <b>eGFR: {{ test.egfr }} </b> _ Normal Range of estimated GFR >= 90 mL/min/1.73m^2 <br>
+                <b>Test Creation Date: {{ test.test_creation_date }} </b><br>
             </li><br>
         {% endfor %}
     </ul>
