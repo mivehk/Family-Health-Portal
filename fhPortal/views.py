@@ -24,7 +24,7 @@ class PatientView(ListView):
 
 class PatientEntry(CreateView):
     model = Patient 
-    fields=['p_first_name','p_last_name','p_dob','p_email','history_afib']
+    fields=['p_first_name','p_last_name','p_dob','p_email','history_afib','sex_cat','blood_type']
     template_name = 'fhPortal/Patient_form.html' 
 
     def get_form(self, *args , **kwargs):
@@ -44,7 +44,7 @@ class PatientEntry(CreateView):
    
 class PatientUpdate(UpdateView):
 	model = Patient
-	fields=['p_first_name','p_last_name','p_dob','p_email','history_afib']
+	fields=['p_first_name','p_last_name','p_dob','p_email','history_afib','sex_cat','blood_type']
 	template_name = 'fhPortal/Patient_form.html'
 
     #def get_queryset(self):

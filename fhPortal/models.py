@@ -6,6 +6,9 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 
 class Patient(models.Model):
+	#list of tuple with database value and human readable pair
+	SEX_CHOICES=[('M', 'Male'), ('F', 'Female')]
+	BLOOD_TYPES=[('A+', 'A+'),('A-', 'A-'),('AB+', 'AB+'),('AB-', 'AB-'),('B+', 'B+'),('B-', 'B-'),('O+', 'O+'),('O-', 'O-')]
 	p_first_name = models.CharField(max_length = 50)
 	p_last_name = models.CharField(max_length = 50)
 	p_dob = models.DateField()
@@ -13,6 +16,9 @@ class Patient(models.Model):
 	history_afib = models.BooleanField(default =False, help_text="Depiction of patient having history of Atrial Fibrillation") 
 	user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="patients")
 	p_id = models.AutoField(primary_key=True)
+	sex_cat = models.CharField(max_length =1, choices=SEX_CHOICES, default='M')
+	blood_type = models.CharField(max_length =3, choices=BLOOD_TYPES, default='O+')
+
 
 	def __str__(self):
 		return (f"{self.p_first_name} {self.p_last_name}")
