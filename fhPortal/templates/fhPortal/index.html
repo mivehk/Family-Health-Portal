@@ -93,6 +93,8 @@
                     <h2 class='data'>Email : {{ patient.p_email }}</h2>
              	    <h2 class='data'>Date of Birth : {{ patient.p_dob }}</h2>
              	    <h2 class='data'>History of AFib: {{ patient.history_afib }}</h2>
+                    <h2 class='data'>Gender {{ patient.sex_cat }}</h2>
+                    <h2 class='data'>Blood Type {{ patient.blood_type }}</h2>
                 </div>
                 <form action="{% url 'fhPortal:patient-test-results' patient.p_id %}" method="get" style="display: inline;">
                     <button type="submit" class="btn btn-default btn-sm"> View Test Results </button>
