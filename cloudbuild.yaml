@@ -5,7 +5,7 @@ substitutions:
   _REGION: us-central1                  # your Artifact Registry + GKE region
   _AR_REPO: fahep-repo                  # your Artifact Registry repo name
   _CLUSTER: k1-cluster                  # currently using an auto-pilot cluster
-  _CLUSTER_LOCATION: us-central1-a      # GKE zone or region
+  _CLUSTER_LOCATION: us-central1      # GKE zone or region
   _NAMESPACE: fhp
 
 options:
