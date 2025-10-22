@@ -1,72 +1,58 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx
-  namespace: fhp
-spec:
-  replicas: 1
-  selector:
-    matchLabels: { app: nginx }
-  template:
-    metadata:
-      labels: { app: nginx }
-    spec:
-      containers:
-      - name: nginx
-        image: us-central1-docker.pkg.dev/familyhealthportal/fahep-repo/nginx:20250817-local
-        ports:
-          - containerPort: 80
-          - containerPort: 443
-        volumeMounts:
-          - name: nginx-conf
-            mountPath: /etc/nginx/nginx.conf
-            subPath: nginx.conf
-            readOnly: true
-          - name: tls
-            mountPath: /etc/nginx/ssl
-            readOnly: true
-        readinessProbe:
-          httpGet:
-            path: /fhAuth/
-            port: 80
-          initialDelaySeconds: 5
-          periodSeconds: 5
-        livenessProbe:
-          httpGet:
-            path: /fhAuth/
-            port: 80
-          initialDelaySeconds: 15
-          periodSeconds: 20
-        resources:
-          requests:
-            cpu: "100m"
-            memory: "128Mi"
-          limits:
-            cpu: "250m"
-            memory: "256Mi"  
-      volumes:
-        - name: nginx-conf
-          configMap:
-            name: nginx-conf
-        - name: tls
-          secret:
-            secretName: dev17-tls
+# This file triggers Google Cloud Build to update Artifact Registry and roll out pods on GKE
+substitutions:
+  # ---- fill these in once ----
+  _PROJECT: familyhealthportal          # your GCP project id
+  _REGION: us-central1                  # your Artifact Registry + GKE region
+  _AR_REPO: fahep-repo                  # your Artifact Registry repo name
+  _CLUSTER: k1-cluster                  # currently using an auto-pilot cluster
+  _CLUSTER_LOCATION: us-central1-a      # GKE zone or region
+  _NAMESPACE: fhp
 
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: nginx-lb
-  namespace: fhp
-spec:
-  type: LoadBalancer
-  loadBalancerIP: 34.133.183.91      # reserved regional static IP
-  selector: { app: nginx }
-  ports:
-    - name: https
-      port: 443
-      targetPort: 443
-    - name: http
-      port: 80
-      targetPort: 80
+options:
+  logging: CLOUD_LOGGING_ONLY
 
+# Cloud Build provides $COMMIT_SHA and $SHORT_SHA for trigger builds
+images:
+  - us-central1-docker.pkg.dev/${_PROJECT}/${_AR_REPO}/fahep:${SHORT_SHA}
+  - us-central1-docker.pkg.dev/${_PROJECT}/${_AR_REPO}/nginx:${SHORT_SHA}
+
+steps:
+  # 1) Build images
+  - name: gcr.io/cloud-builders/docker
+    dir: .
+    args: [
+      "build",
+      "-f", "Dockerfile.fahep",
+      "-t", "us-central1-docker.pkg.dev/${_PROJECT}/${_AR_REPO}/fahep:${SHORT_SHA}",
+      "."
+    ]
+
+  - name: gcr.io/cloud-builders/docker
+    dir: .
+    args: [
+      "build",
+      "-f", "Dockerfile.nginx",
+      "-t", "us-central1-docker.pkg.dev/${_PROJECT}/${_AR_REPO}/nginx:${SHORT_SHA}",
+      "."
+    ]
+
+  # 2) Push images
+  - name: gcr.io/cloud-builders/docker
+    args: ["push", "us-central1-docker.pkg.dev/${_PROJECT}/${_AR_REPO}/fahep:${SHORT_SHA}"]
+
+  - name: gcr.io/cloud-builders/docker
+    args: ["push", "us-central1-docker.pkg.dev/${_PROJECT}/${_AR_REPO}/nginx:${SHORT_SHA}"]
+
+  # 3) Deploy to GKE with rolling update
+  # gke-deploy will read your YAMLs (fahep.yaml, nginx.yaml) and replace images.
+  - name: gcr.io/cloud-builders/gke-deploy
+    args:
+      [
+        "run",
+        "--filename=fahep.yaml,nginx.yaml",
+        "--image=us-central1-docker.pkg.dev/${_PROJECT}/${_AR_REPO}/fahep:${SHORT_SHA}",
+        "--image=us-central1-docker.pkg.dev/${_PROJECT}/${_AR_REPO}/nginx:${SHORT_SHA}",
+        "--namespace=${_NAMESPACE}",
+        "--cluster=${_CLUSTER}",
+        "--location=${_CLUSTER_LOCATION}"
+      ]
