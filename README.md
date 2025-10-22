@@ -1,7 +1,7 @@
 # Family Health Portal Project
 
-This project demonstrates a Django-based web portal, which records family members health records and laboratory test reuslts, and results are saved in a DB.
-please take a look at the Demo: https://www.youtube.com/watch?v=rxt4Au31NOY
+This project demonstrates the benefits of a family web portal, which records family members health records and laboratory test reuslts.
+please take a look at the Demo: https://dev17.miveh-nejad.info
 
 
 ---
