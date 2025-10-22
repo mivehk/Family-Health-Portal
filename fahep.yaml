@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: fahep-secret
+  namespace: fhp
+type: Opaque
+stringData:
+  DATABASE_URL: postgresql://kmive:QWEzxc3198@db:5432/dbfahep
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fahep
+  namespace: fhp
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: fahep }
+  template:
+    metadata:
+      labels: { app: fahep }
+    spec:
+      containers:
+      - name: fahep
+        image: us-central1-docker.pkg.dev/familyhealthportal/fahep-repo/fahep:20250904-local  # <-- your tag
+        ports:
+          - containerPort: 8000
+        env:
+          - name: ALLOWED_HOSTS
+            value: "localhost,127.0.0.1,fahep,fahep.fhp.svc,fahep.fhp.svc.cluster.local,dev17.miveh-nejad.info"
+          - name: DJANGO_SETTINGS_MODULE
+            value: fhProject.settings
+          - name: DJANGO_CSRF_TRUSTED_ORIGINS
+            value: https://dev17.miveh-nejad.info
+          - name: PYTHONUNBUFFERED
+            value: "1"
+        envFrom:
+          - secretRef:
+              name: fahep-secret    
+        readinessProbe:
+          httpGet:
+            path: /fhAuth/
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /fhAuth/
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "250m"
+            memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fahep
+  namespace: fhp
+spec:
+  type: ClusterIP
+  selector: { app: fahep }
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
+

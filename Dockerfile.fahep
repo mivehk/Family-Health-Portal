@@ -1,0 +1,26 @@
+FROM python:3.9-slim AS base
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    POETRY_VIRTUALENVS_CREATE=false \
+    PYTHONPATH=/app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 curl && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY requirements.txt .
+RUN python3 -m pip install --upgrade pip setuptools wheel
+RUN pip install --no-cache-dir --progress-bar off -r requirements.txt
+
+COPY ./fhProject /app/fhProject
+COPY ./fhAuth /app/fhAuth
+COPY ./fhPortal /app/fhPortal
+COPY ./static /app/static
+COPY ./manage.py /app/manage.py
+
+# Optional (if Django): collect static at build time if settings allow it
+# RUN python manage.py collectstatic --noinput
+
+EXPOSE 8000
+CMD ["gunicorn", "fhProject.wsgi:application", "--bind", "0.0.0.0:8000", "--timeout", "60"]
