@@ -49,7 +49,8 @@ steps:
     args:
       [
         "run",
-        "--filename=fahep.yaml,nginx.yaml",
+        "--filename=fahep.yaml",
+        "--filename=nginx.yaml",
         "--image=us-central1-docker.pkg.dev/${_PROJECT}/${_AR_REPO}/fahep:${SHORT_SHA}",
         "--image=us-central1-docker.pkg.dev/${_PROJECT}/${_AR_REPO}/nginx:${SHORT_SHA}",
         "--namespace=${_NAMESPACE}",
